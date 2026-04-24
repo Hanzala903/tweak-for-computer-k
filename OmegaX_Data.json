@@ -1,0 +1,68 @@
+{
+    "applications": {
+        "Browsers": {
+            "Google Chrome": "Google.Chrome",
+            "Mozilla Firefox": "Mozilla.Firefox",
+            "Brave": "Brave.Brave",
+            "Opera": "Opera.Opera",
+            "Microsoft Edge": "Microsoft.Edge"
+        },
+        "Development": {
+            "VS Code": "Microsoft.VisualStudioCode",
+            "Python 3.12": "Python.Python.3.12",
+            "Node.js": "OpenJS.NodeJS",
+            "Git": "Git.Git",
+            "Docker Desktop": "Docker.DockerDesktop"
+        },
+        "Media": {
+            "VLC Player": "VideoLAN.VLC",
+            "Spotify": "Spotify.Spotify",
+            "GIMP": "GIMP.GIMP",
+            "OBS Studio": "OBSProject.OBSStudio",
+            "K-Lite Codec Pack": "KLiteCodecPack.KLiteCodecPack"
+        },
+        "Security": {
+            "Wireshark": "WiresharkFoundation.Wireshark",
+            "Nmap": "Nmap.Nmap",
+            "Metasploit": "Rapid7.Metasploit"
+        },
+        "Gaming": {
+            "Steam": "Valve.Steam",
+            "Discord": "Discord.Discord",
+            "Epic Games": "EpicGames.EpicGamesLauncher",
+            "Battle.net": "Blizzard.BattleNet"
+        },
+        "Utilities": {
+            "7-Zip": "7zip.7zip",
+            "CCleaner": "Piriform.CCleaner",
+            "HWMonitor": "CPUID.HWMonitor",
+            "PuTTY": "PuTTY.PuTTY",
+            "qBittorrent": "qBittorrent.qBittorrent"
+        }
+    },
+    "essentialTweaks": {
+        "Disable Telemetry": "telemetry",
+        "Disable Cortana": "cortana",
+        "Disable Game DVR": "gamedvr",
+        "Disable Xbox Services": "xbox",
+        "Disable OneDrive Startup": "onedrive",
+        "Disable Ads in Start Menu": "ads",
+        "Show File Extensions": "fileext",
+        "Show Hidden Files": "hiddenfiles"
+    },
+    "performanceTweaks": {
+        "High Performance Power Plan": "powerplan",
+        "Disable Visual Effects": "visualfx",
+        "Disable Startup Delay": "startupdelay",
+        "CPU Core Unparking": "coreunpark",
+        "Large System Cache": "largecache",
+        "Win32 Priority Separation": "prioritysep"
+    },
+    "networkTweaks": {
+        "CTCP Congestion Provider": "ctcp",
+        "Disable Network Throttling": "nothrottle",
+        "Set Cloudflare DNS": "dns",
+        "Enable RSS/Checksum Offloading": "rss",
+        "Disable QoS NonBestEffortLimit": "qos"
+    }
+}

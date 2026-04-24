@@ -1,0 +1,476 @@
+<!-- OmegaX.xaml - Main GUI Window -->
+<!-- Dibuat untuk Yang Mulia Putri Incha -->
+
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="WINUTIL OMEGA X - Ultimate Windows Toolkit" 
+        Height="720" Width="1280" 
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResizeWithGrip"
+        Background="{DynamicResource MainBackgroundColor}">
+
+    <Window.Resources>
+        <!-- Warna Tema -->
+        <SolidColorBrush x:Key="MainBackgroundColor" Color="#1E1E2E"/>
+        <SolidColorBrush x:Key="MainForegroundColor" Color="#CDD6F4"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#89B4FA"/>
+        <SolidColorBrush x:Key="SuccessColor" Color="#A6E3A1"/>
+        <SolidColorBrush x:Key="WarningColor" Color="#F9E2AF"/>
+        <SolidColorBrush x:Key="ErrorColor" Color="#F38BA8"/>
+        <SolidColorBrush x:Key="CardBackgroundColor" Color="#313244"/>
+        <SolidColorBrush x:Key="ButtonHoverColor" Color="#45475A"/>
+        
+        <!-- Style untuk Category Button -->
+        <Style x:Key="CategoryButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource MainForegroundColor}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="8"
+                                BorderBrush="{DynamicResource AccentColor}"
+                                BorderThickness="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToThicknessConverter}}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ButtonHoverColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource AccentColor}"/>
+                                <Setter Property="Foreground" Value="#1E1E2E"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Style untuk Tweak Toggle -->
+        <Style x:Key="TweakToggleStyle" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{DynamicResource MainForegroundColor}"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="8,4"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Border Background="{DynamicResource CardBackgroundColor}" CornerRadius="6" Padding="10,8">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="20" Height="20" CornerRadius="4" 
+                                        Background="{DynamicResource MainBackgroundColor}"
+                                        BorderBrush="{DynamicResource AccentColor}" BorderThickness="2">
+                                    <Path x:Name="CheckMark" 
+                                          Data="M 0,5 L 5,10 L 12,0" 
+                                          Stroke="White" StrokeThickness="2"
+                                          Visibility="Collapsed"/>
+                                </Border>
+                                <TextBlock Text="{TemplateBinding Content}" Margin="10,0,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Converter untuk Border saat Checked -->
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Window.Resources>
+
+    <!-- Main Layout -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Title Bar -->
+            <RowDefinition Height="Auto"/>   <!-- Search Bar -->
+            <RowDefinition Height="Auto"/>   <!-- Tab Navigation -->
+            <RowDefinition Height="*"/>       <!-- Content Area -->
+            <RowDefinition Height="Auto"/>   <!-- Status Bar -->
+        </Grid.RowDefinitions>
+        
+        <!-- ===== TITLE BAR ===== -->
+        <Border Grid.Row="0" Background="#181825" Height="40" MouseLeftButtonDown="DragWindow">
+            <Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0">
+                    <TextBlock Text="🛡️ WINUTIL OMEGA X" VerticalAlignment="Center" 
+                               FontSize="16" FontWeight="Bold" Foreground="{DynamicResource AccentColor}"/>
+                    <TextBlock Text=" - Ultimate Windows Toolkit" VerticalAlignment="Center" 
+                               FontSize="14" Foreground="{DynamicResource MainForegroundColor}" Margin="10,0,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
+                    <Button x:Name="MinimizeButton" Content="─" Width="30" Height="30" 
+                            Click="MinimizeWindow" Style="{StaticResource AccentButtonStyle}"/>
+                    <Button x:Name="MaximizeButton" Content="□" Width="30" Height="30" 
+                            Click="MaximizeWindow" Style="{StaticResource AccentButtonStyle}"/>
+                    <Button x:Name="CloseButton" Content="✕" Width="30" Height="30" 
+                            Click="CloseWindow" Style="{StaticResource CloseButtonStyle}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- ===== SEARCH BAR ===== -->
+        <Border Grid.Row="1" Background="{DynamicResource CardBackgroundColor}" Padding="10">
+            <Grid>
+                <TextBox x:Name="SearchBox" FontSize="14" Padding="10,8" 
+                         Background="{DynamicResource MainBackgroundColor}"
+                         Foreground="{DynamicResource MainForegroundColor}"
+                         BorderBrush="{DynamicResource AccentColor}" BorderThickness="1"
+                         TextChanged="SearchTextChanged"/>
+                <TextBlock IsHitTestVisible="False" Text="🔍 Cari tweak atau aplikasi..." 
+                           VerticalAlignment="Center" Margin="15,0" FontSize="14" 
+                           Foreground="Gray" Visibility="Hidden">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <Button x:Name="ClearSearchButton" Content="✕" Width="30" Height="30" 
+                        HorizontalAlignment="Right" Margin="0,0,10,0" Click="ClearSearch"/>
+            </Grid>
+        </Border>
+        
+        <!-- ===== TAB NAVIGATION ===== -->
+        <Border Grid.Row="2" Background="{DynamicResource MainBackgroundColor}" Padding="10,5">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <ToggleButton x:Name="TabInstall" Content="📦 INSTALL" Style="{StaticResource CategoryButtonStyle}" 
+                              GroupName="MainTabs" IsChecked="True" Click="SwitchTab"/>
+                <ToggleButton x:Name="TabTweaks" Content="⚡ TWEAKS" Style="{StaticResource CategoryButtonStyle}" 
+                              GroupName="MainTabs" Click="SwitchTab"/>
+                <ToggleButton x:Name="TabOmega" Content="🌀 OMEGA X (BARU!)" Style="{StaticResource CategoryButtonStyle}" 
+                              GroupName="MainTabs" Click="SwitchTab"/>
+                <ToggleButton x:Name="TabNetwork" Content="🌐 NETWORK" Style="{StaticResource CategoryButtonStyle}" 
+                              GroupName="MainTabs" Click="SwitchTab"/>
+                <ToggleButton x:Name="TabPrivacy" Content="🔒 PRIVACY" Style="{StaticResource CategoryButtonStyle}" 
+                              GroupName="MainTabs" Click="SwitchTab"/>
+                <ToggleButton x:Name="TabRecovery" Content="🔑 PASSWORD & RECOVERY" Style="{StaticResource CategoryButtonStyle}" 
+                              GroupName="MainTabs" Click="SwitchTab"/>
+                <ToggleButton x:Name="TabISO" Content="💿 CUSTOM ISO" Style="{StaticResource CategoryButtonStyle}" 
+                              GroupName="MainTabs" Click="SwitchTab"/>
+                <ToggleButton x:Name="TabSettings" Content="⚙️ SETTINGS" Style="{StaticResource CategoryButtonStyle}" 
+                              GroupName="MainTabs" Click="SwitchTab"/>
+            </StackPanel>
+        </Border>
+        
+        <!-- ===== CONTENT AREA ===== -->
+        <Grid Grid.Row="3" Margin="10">
+            
+            <!-- TAB 1: INSTALL -->
+            <ScrollViewer x:Name="TabInstallContent" Visibility="Visible">
+                <StackPanel>
+                    <TextBlock Text="📦 INSTALL APLIKASI" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <TextBlock Text="Pilih aplikasi yang ingin diinstall (Centang yang diinginkan)" Margin="0,0,0,15" Foreground="Gray"/>
+                    
+                    <!-- Category Buttons (dibuat dinamis dari JSON) -->
+                    <WrapPanel x:Name="CategoryPanel" Margin="0,0,0,15"/>
+                    
+                    <!-- Application List (dibuat dinamis dari JSON) -->
+                    <UniformGrid x:Name="AppsPanel" Columns="3"/>
+                    
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20">
+                        <Button x:Name="InstallSelectedButton" Content="▶ INSTALL YANG DIPILIH" 
+                                Background="{DynamicResource SuccessColor}" Foreground="Black"
+                                FontSize="14" FontWeight="Bold" Padding="20,10" Margin="5"
+                                Click="InstallSelected"/>
+                        <Button x:Name="SelectAllButton" Content="☑ SELECT ALL" 
+                                Background="{DynamicResource CardBackgroundColor}"
+                                Padding="15,10" Margin="5" Click="SelectAllApps"/>
+                        <Button x:Name="SelectNoneButton" Content="☐ SELECT NONE" 
+                                Background="{DynamicResource CardBackgroundColor}"
+                                Padding="15,10" Margin="5" Click="SelectNoneApps"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!-- TAB 2: TWEAKS -->
+            <ScrollViewer x:Name="TabTweaksContent" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="⚡ SYSTEM TWEAKS" FontSize="20" FontWeight="Bold"/>
+                    <TextBlock Text="Pilih tweak yang ingin diterapkan (⚠️ Beberapa tweak bersifat permanen)" 
+                               Margin="0,5,0,15" Foreground="Gray"/>
+                    
+                    <Expander Header="🔧 Essential Tweaks (Rekomendasi)" IsExpanded="True" Margin="0,5">
+                        <UniformGrid x:Name="EssentialTweaksPanel" Columns="2"/>
+                    </Expander>
+                    
+                    <Expander Header="🚀 Performance & Gaming Tweaks" IsExpanded="False" Margin="0,5">
+                        <UniformGrid x:Name="PerformanceTweaksPanel" Columns="2"/>
+                    </Expander>
+                    
+                    <Expander Header="🌐 Network & Latency Tweaks (BARU - Aggressive TCP/IP)" IsExpanded="False" Margin="0,5">
+                        <UniformGrid x:Name="NetworkTweaksPanel" Columns="2"/>
+                    </Expander>
+                    
+                    <Expander Header="📱 Windhawk Mods Integration (100+ System Mods)" IsExpanded="False" Margin="0,5">
+                        <UniformGrid x:Name="WindhawkModsPanel" Columns="2"/>
+                    </Expander>
+                    
+                    <Expander Header="🤖 AI & Copilot Control (BARU - Winhance)" IsExpanded="False" Margin="0,5">
+                        <UniformGrid x:Name="AITweaksPanel" Columns="2"/>
+                    </Expander>
+                    
+                    <Expander Header="🛡️ O&O ShutUp10++ Privacy (200+ Settings)" IsExpanded="False" Margin="0,5">
+                        <UniformGrid x:Name="PrivacyTweaksPanel" Columns="2"/>
+                    </Expander>
+                    
+                    <Expander Header="⚠️ Advanced Tweaks (Hati-hati!)" IsExpanded="False" Margin="0,5">
+                        <UniformGrid x:Name="AdvancedTweaksPanel" Columns="2"/>
+                    </Expander>
+                    
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20">
+                        <Button x:Name="ApplyTweaksButton" Content="▶ TERAPKAN TWEAKS" 
+                                Background="{DynamicResource AccentColor}" Foreground="Black"
+                                FontSize="14" FontWeight="Bold" Padding="20,10" Margin="5"
+                                Click="ApplyTweaks"/>
+                        <Button x:Name="UndoTweaksButton" Content="↩️ UNDO SEMUA TWEAKS" 
+                                Background="{DynamicResource ErrorColor}" Foreground="Black"
+                                Padding="15,10" Margin="5" Click="UndoTweaks"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!-- TAB 3: OMEGA X (Fitur Baru) -->
+            <ScrollViewer x:Name="TabOmegaContent" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="🌀 OMEGA X - FITUR TERBARU" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource AccentColor}"/>
+                    <TextBlock Text="Fitur-fitur yang tidak ada di WinUtil Chris Titus" Margin="0,5,0,20" Foreground="Gray"/>
+                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <!-- Kolom Kiri -->
+                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                            <Border Background="{DynamicResource CardBackgroundColor}" CornerRadius="10" Padding="15" Margin="0,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="🎨 Windhawk Deep Modding" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="100+ system mods yang bisa diaktifkan" FontSize="12" Foreground="Gray" TextWrapping="Wrap"/>
+                                    <Button x:Name="InstallWindhawkButton" Content="Install Windhawk" Margin="0,10,0,0" Click="InstallWindhawk"/>
+                                    <TextBlock x:Name="WindhawkStatus" Text="Status: Belum terinstall" FontSize="11" Foreground="Orange"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <Border Background="{DynamicResource CardBackgroundColor}" CornerRadius="10" Padding="15" Margin="0,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="🤖 AI & Copilot Control" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="Manajemen penuh fitur AI Windows" FontSize="12" Foreground="Gray" TextWrapping="Wrap"/>
+                                    <StackPanel Margin="0,10,0,0">
+                                        <CheckBox x:Name="DisableCopilot" Content="Disable Windows Copilot" Margin="0,5"/>
+                                        <CheckBox x:Name="DisableRecall" Content="Disable Windows Recall (Privacy)" Margin="0,5"/>
+                                        <CheckBox x:Name="BlockAITelemetry" Content="Block AI Telemetry Network" Margin="0,5"/>
+                                    </StackPanel>
+                                    <Button x:Name="ApplyAIControlButton" Content="Terapkan AI Control" Margin="0,10,0,0" Click="ApplyAIControl"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <Border Background="{DynamicResource CardBackgroundColor}" CornerRadius="10" Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="🌐 Network Ultimate Optimization" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="Aggressive TCP/IP tuning untuk latency minimal" FontSize="12" Foreground="Gray"/>
+                                    <StackPanel Margin="0,10,0,0">
+                                        <CheckBox x:Name="EnableCTCP" Content="Enable CTCP Congestion Provider" IsChecked="True" Margin="0,5"/>
+                                        <CheckBox x:Name="DisableThrottling" Content="Disable Network Throttling" IsChecked="True" Margin="0,5"/>
+                                        <CheckBox x:Name="SetCloudflareDNS" Content="Set Cloudflare DNS (1.1.1.1)" IsChecked="True" Margin="0,5"/>
+                                        <CheckBox x:Name="EnableRSS" Content="Enable RSS & Checksum Offloading" IsChecked="True" Margin="0,5"/>
+                                    </StackPanel>
+                                    <Button x:Name="ApplyNetworkButton" Content="Optimize Network" Margin="0,10,0,0" Click="ApplyNetworkOptimization"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        
+                        <!-- Kolom Kanan -->
+                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                            <Border Background="{DynamicResource CardBackgroundColor}" CornerRadius="10" Padding="15" Margin="0,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="📊 Sophia Script Integration" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="150+ registry-level tweaks dari Sophia Script" FontSize="12" Foreground="Gray"/>
+                                    <ComboBox x:Name="SophiaPresetCombo" Margin="0,10,0,0" SelectedIndex="0">
+                                        <ComboBoxItem Content="Default Windows"/>
+                                        <ComboBoxItem Content="Privacy Focused"/>
+                                        <ComboBoxItem Content="Performance Focused"/>
+                                        <ComboBoxItem Content="Gaming Focused"/>
+                                        <ComboBoxItem Content="Custom (Coming Soon)"/>
+                                    </ComboBox>
+                                    <Button x:Name="ApplySophiaButton" Content="Apply Sophia Preset" Margin="0,10,0,0" Click="ApplySophiaPreset"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <Border Background="{DynamicResource CardBackgroundColor}" CornerRadius="10" Padding="15" Margin="0,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="⚡ Gaming Extreme Mode" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="One-click boost untuk gaming maksimal" FontSize="12" Foreground="Gray"/>
+                                    <Button x:Name="EnableGamingModeButton" Content="🎮 ENABLE GAMING MODE" 
+                                            Background="{DynamicResource SuccessColor}" Foreground="Black"
+                                            FontWeight="Bold" Padding="20,10" Margin="0,10,0,0" Click="EnableGamingMode"/>
+                                    <TextBlock Text="Optimasi: CPU Core Unparking + Priority Boost + Low Latency" 
+                                               FontSize="10" Foreground="Gray" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <Border Background="{DynamicResource CardBackgroundColor}" CornerRadius="10" Padding="15">
+                                <StackPanel>
+                                    <TextBlock Text="💿 Advanced ISO Builder" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="Buat Windows ISO custom dengan tweaks terintegrasi" FontSize="12" Foreground="Gray"/>
+                                    <TextBlock Text="(Beta - Membutuhkan Windows ADK)" FontSize="10" Foreground="Orange" Margin="0,5,0,0"/>
+                                    <Button x:Name="OpenISOBuilderButton" Content="Open ISO Builder" Margin="0,10,0,0" Click="OpenISOBuilder"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!-- TAB 4: NETWORK -->
+            <ScrollViewer x:Name="TabNetworkContent" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="🌐 NETWORK TOOLS" FontSize="20" FontWeight="Bold"/>
+                    <WrapPanel Margin="0,15">
+                        <Button x:Name="NetScanButton" Content="📡 Scan Network Devices" Padding="15,10" Margin="5" Click="ScanNetwork"/>
+                        <Button x:Name="NetSpeedTestButton" Content="⚡ Speed Test" Padding="15,10" Margin="5" Click="SpeedTest"/>
+                        <Button x:Name="NetPortScanButton" Content="🔍 Port Scanner" Padding="15,10" Margin="5" Click="PortScanner"/>
+                        <Button x:Name="NetDNSChangerButton" Content="🌍 DNS Changer" Padding="15,10" Margin="5" Click="DNSChanger"/>
+                        <Button x:Name="NetWiFiPassButton" Content="📶 WiFi Password Revealer" Padding="15,10" Margin="5" Click="RevealWiFiPasswords"/>
+                    </WrapPanel>
+                    <TextBox x:Name="NetworkOutputBox" IsReadOnly="True" TextWrapping="Wrap" 
+                             Background="{DynamicResource MainBackgroundColor}"
+                             Height="300" FontFamily="Consolas" FontSize="11" Margin="0,10"/>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!-- TAB 5: PRIVACY -->
+            <ScrollViewer x:Name="TabPrivacyContent" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="🔒 PRIVACY TOOLS" FontSize="20" FontWeight="Bold"/>
+                    <TextBlock Text="200+ privacy settings dari O&O ShutUp10++" Margin="0,5,0,15" Foreground="Gray"/>
+                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <StackPanel Grid.Column="0">
+                            <CheckBox x:Name="PrivacyDisableTelemetry" Content="Disable Windows Telemetry" Margin="0,5"/>
+                            <CheckBox x:Name="PrivacyDisableAdvertisingID" Content="Disable Advertising ID" Margin="0,5"/>
+                            <CheckBox x:Name="PrivacyDisableLocation" Content="Disable Location Tracking" Margin="0,5"/>
+                            <CheckBox x:Name="PrivacyDisableCamera" Content="Disable Camera Access (All Apps)" Margin="0,5"/>
+                            <CheckBox x:Name="PrivacyDisableMicrophone" Content="Disable Microphone Access (All Apps)" Margin="0,5"/>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="1">
+                            <CheckBox x:Name="PrivacyDisableActivityHistory" Content="Disable Activity History" Margin="0,5"/>
+                            <CheckBox x:Name="PrivacyDisableFindMyDevice" Content="Disable Find My Device" Margin="0,5"/>
+                            <CheckBox x:Name="PrivacyDisableInkingTyping" Content="Disable Inking & Typing Data Collection" Margin="0,5"/>
+                            <CheckBox x:Name="PrivacyDisableTailoredExperiences" Content="Disable Tailored Experiences" Margin="0,5"/>
+                            <CheckBox x:Name="PrivacyBlockTelemetryHosts" Content="Block All Telemetry IPs via Hosts" Margin="0,5"/>
+                        </StackPanel>
+                    </Grid>
+                    
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20">
+                        <Button x:Name="ApplyPrivacyButton" Content="🔒 APPLY PRIVACY SETTINGS" 
+                                Background="{DynamicResource AccentColor}" Foreground="Black"
+                                Padding="20,10" Margin="5" Click="ApplyPrivacySettings"/>
+                        <Button x:Name="OpenOOSUButton" Content="🛡️ Open O&O ShutUp10++" 
+                                Background="{DynamicResource CardBackgroundColor}"
+                                Padding="20,10" Margin="5" Click="OpenOOSU"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!-- TAB 6: PASSWORD & RECOVERY -->
+            <ScrollViewer x:Name="TabRecoveryContent" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="🔑 PASSWORD & RECOVERY TOOLS" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource WarningColor}"/>
+                    <TextBlock Text="⚠️ Gunakan dengan bijak, Yang Mulia" Margin="0,5,0,15" Foreground="Orange"/>
+                    
+                    <WrapPanel Margin="0,15">
+                        <Button x:Name="RecoveryBypassButton" Content="🔓 Bypass Windows Login (Sticky Keys)" Padding="15,10" Margin="5" Click="BypassWindowsLogin"/>
+                        <Button x:Name="RecoveryWiFiButton" Content="📶 Extract WiFi Passwords" Padding="15,10" Margin="5" Click="ExtractWiFiPasswords"/>
+                        <Button x:Name="RecoveryBrowserButton" Content="🌐 Extract Browser Passwords" Padding="15,10" Margin="5" Click="ExtractBrowserPasswords"/>
+                        <Button x:Name="RecoveryHiddenAdminButton" Content="👑 Create Hidden Admin Account" Padding="15,10" Margin="5" Click="CreateHiddenAdmin"/>
+                        <Button x:Name="RecoveryPasswordGenButton" Content="🔐 Generate Strong Password" Padding="15,10" Margin="5" Click="GeneratePassword"/>
+                    </WrapPanel>
+                    
+                    <TextBox x:Name="RecoveryOutputBox" IsReadOnly="True" TextWrapping="Wrap" 
+                             Background="{DynamicResource MainBackgroundColor}"
+                             Height="200" FontFamily="Consolas" FontSize="11" Margin="0,10"/>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!-- TAB 7: CUSTOM ISO -->
+            <ScrollViewer x:Name="TabISOContent" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="💿 CUSTOM ISO BUILDER (Microwin Enhanced)" FontSize="20" FontWeight="Bold"/>
+                    <TextBlock Text="Buat Windows ISO custom dengan tweaks dan aplikasi terintegrasi" Margin="0,5,0,15" Foreground="Gray"/>
+                    
+                    <Border Background="{DynamicResource CardBackgroundColor}" CornerRadius="10" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="Pilih ISO Sumber" FontWeight="Bold"/>
+                            <TextBlock Text="Mount ISO Windows atau pilih install.wim" FontSize="12" Foreground="Gray" Margin="0,5"/>
+                            <Button x:Name="SelectISOButton" Content="📂 Pilih ISO / WIM File" Margin="0,10" Click="SelectISO"/>
+                            <TextBlock x:Name="SelectedISOPath" Text="Belum ada file dipilih" FontSize="11" Foreground="Gray"/>
+                            
+                            <Separator Margin="0,15"/>
+                            
+                            <TextBlock Text="Integrations" FontWeight="Bold"/>
+                            <CheckBox x:Name="ISOIntegrateTweaks" Content="Integrate Tweaks (Essential + Performance)" IsChecked="True" Margin="0,5"/>
+                            <CheckBox x:Name="ISOIntegrateApps" Content="Integrate Base Applications (Chrome + 7zip)" IsChecked="True" Margin="0,5"/>
+                            <CheckBox x:Name="ISOIntegratePrivacy" Content="Integrate Privacy Settings" IsChecked="True" Margin="0,5"/>
+                            
+                            <Button x:Name="StartISOBuildButton" Content="▶ BUILD CUSTOM ISO" 
+                                    Background="{DynamicResource SuccessColor}" Foreground="Black"
+                                    FontWeight="Bold" Padding="20,10" Margin="0,15" Click="StartISOBuild"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!-- TAB 8: SETTINGS -->
+            <ScrollViewer x:Name="TabSettingsContent" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="⚙️ SETTINGS" FontSize="20" FontWeight="Bold"/>
+                    
+                    <Border Background="{DynamicResource CardBackgroundColor}" CornerRadius="10" Padding="15" Margin="0,10">
+                        <StackPanel>
+                            <TextBlock Text="Theme" FontWeight="Bold"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,10">
+                                <RadioButton x:Name="ThemeLight" Content="☀️ Light" GroupName="Theme" Margin="0,0,15,0" Click="ChangeTheme"/>
+                                <RadioButton x:Name="ThemeDark" Content="🌙 Dark" GroupName="Theme" IsChecked="True" Click="ChangeTheme"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    
+                    <Border Background="{DynamicResource CardBackgroundColor}" CornerRadius="10" Padding="15" Margin="0,10">
+                        <StackPanel>
+                            <TextBlock Text="About" FontWeight="Bold"/>
+                            <TextBlock Text="WINUTIL OMEGA X v1.0" Margin="0,10,0,5"/>
+                            <TextBlock Text="Fitur: WinUtil + Windhawk + Winhance + Sophia Script + O&O ShutUp10++ + Windows Optimizer" TextWrapping="Wrap" Foreground="Gray"/>
+                            <TextBlock Text="Untuk kepentingan Yang Mulia Putri Incha" Margin="0,10,0,0" FontStyle="Italic" Foreground="{DynamicResource AccentColor}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+        
+        <!-- ===== STATUS BAR ===== -->
+        <Border Grid.Row="4" Background="{DynamicResource CardBackgroundColor}" Height="30">
+            <TextBlock x:Name="StatusBar" Text="Siap, Yang Mulia!" VerticalAlignment="Center" Margin="10,0" FontSize="11"/>
+        </Border>
+    </Grid>
+</Window>
